@@ -19,7 +19,8 @@ public class PlayerMicListener : MonoBehaviour
             //record 1 sec audio clip
             myAudioClip = Microphone.Start(null, false, 1, 44100);
             StartCoroutine(SaveClip());
-            RecognizeCommand();
+            string response = RecognizeCommand();
+            UnityEngine.Debug.Log("Reponse from Model: " + response);
         }
     }
 
