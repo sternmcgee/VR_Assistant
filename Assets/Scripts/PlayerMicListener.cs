@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -17,6 +19,7 @@ public class PlayerMicListener : MonoBehaviour
             //record 1 sec audio clip
             myAudioClip = Microphone.Start(null, false, 1, 44100);
             StartCoroutine(SaveClip());
+            RecognizeCommand();
         }
     }
 
@@ -26,5 +29,24 @@ public class PlayerMicListener : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
         //save audio file to Assets/player_command.wav
         SavWav.Save("player_command", myAudioClip);
+
+        yield return null;
+    }
+
+    private string RecognizeCommand()
+    {
+        string filename = "player_command.wav";
+        string command = "";
+        Process process = new Process();
+        ProcessStartInfo startInfo = new ProcessStartInfo();
+        startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+        startInfo.FileName = "cmd.exe";
+        startInfo.Arguments = "/C python abc.py " + Path.Combine(Application.dataPath, filename);
+        process.StartInfo = startInfo;
+        process.Start();
+        process.WaitForExit();
+        command = process.StandardOutput.ReadLine();
+
+        return command;
     }
 }
